@@ -160,7 +160,7 @@ function action() {
     n = equalize(n1, n2);
     n1 = n.n;
     n2 = n.m;
-    document.getElementById("p").innerHTML += 'INITIAL:<br>';
+    document.getElementById("p").innerHTML = 'INITIAL:<br>';
     let a = '';
     while (a.length != n1.length) {
         a += '0';
