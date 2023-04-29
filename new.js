@@ -56,11 +56,52 @@ function dtbs(n) {
 }
 
 function badd(n, m) {
+    n = rev(n);
+    m = rev(m);
+    let s = '', 
+        c = 0;
+    for(let i=0; i<n.length; i++) {
+        if(n[i]=='0' && m[i]=='0' && c==0) {
+            s += '0';
+            c = 0;
+        }
+        else if(n[i]=='0' && m[i]=='1' && c==0) {
+            s += '1';
+            c = 0;
+        }
+        else if(n[i]=='1' && m[i]=='0' && c==0) {
+            s += '1';
+            c = 0;
+        }
+        else if(n[i]=='1' && m[i]=='1' && c==0) {
+            s += '0';
+            c = 1;
+        }
+        else if(n[i]=='0' && m[i]=='0' && c==1) {
+            s += '1';
+            c = 0;
+        }
+        else if(n[i]=='0' && m[i]=='1' && c==1) {
+            s += '0';
+            c = 1;
+        }
+        else if(n[i]=='1' && m[i]=='0' && c==1) {
+            s += '0';
+            c = 1;
+        }
+        else if(n[i]=='1' && m[i]=='1' && c==1) {
+            s += '1';
+            c = 1;
+        }
 
+    }
+    return rev(s);
 }
 
 function asr(n) {
-
+    n= rev(n);
+    n = n.slice(1,n.length)+n[n.length-1];
+    return rev(n);
 }
 
 function equalize(n,m) {
@@ -76,7 +117,41 @@ function equalize(n,m) {
     return {n, m};
 }
 
-function mul(m, q) {
+function getOp(n, m) {
+    console.log(n);
+    n = n[n.length-1];
+    n = parseInt(n);
+    m = parseInt(m);
+    if(m-n > 0) {
+        var op = '+';
+    }
+    else if (m-n < 0) {
+        var op = '-';
+    }
+    else {
+        var op = 'nop';
+    }
+    console.log('op = '+op);
+    return op;
+}
+
+function btds(n) {
+    if(n[0]=='1') {
+        n = tcmp(n);
+        var op = '-';
+    }
+
+    else
+        var op = '+';
+    n = rev(n);
+    var s=0;
+    for(let i = 0; i<n.length; i++) {
+        s += (2**i)*(parseInt(n[i]));
+    }
+    return op+s;
+}
+
+function action() {
     var n= importData();
     n1 = n.n1;
     n2 = n.n2;
@@ -85,10 +160,41 @@ function mul(m, q) {
     n = equalize(n1, n2);
     n1 = n.n;
     n2 = n.m;
-    document.getElementById("p").innerHTML += n1+"<br>"+n2;
+    document.getElementById("p").innerHTML += 'INITIAL:<br>';
+    let a = '';
+    while (a.length != n1.length) {
+        a += '0';
+    }
+    qm = '0';
+    m= n1;
+    q = n2
+    document.getElementById("p").innerHTML += "M: "+m+"<br>"+'A: '+a+' '+'Q: '+q+' '+'Q-1: '+qm+"<br>";
+    /*
+    document.getElementById("col0").innerHTML += "M: "+n1+"<br>"
+    document.getElementById("col0").innerHTML += 'A: '+a+"<br>"
+    document.getElementById("col1").innerHTML += 'Q: '+n2+"<br>";
+    */
+    for(let i=0;i<n1.length; i++) {
+        document.getElementById("p").innerHTML += '<br>CYCLE '+(i+1)+'<br>';
+        if (getOp(q, qm) == '+') {
+            a = badd(a,m);
+            var op = 'A+M';
+        }
+        else if (getOp(q, qm) == '-') {
+            a = badd(a,tcmp(m));
+            var op = 'A-M';
+        }
+        else {
+            var op = 'NOP';
+        }
+        console.log("a = "+a);
+        document.getElementById("p").innerHTML += op+' '+'A: '+a+' '+'Q: '+q+' '+'Q-1: '+qm+"<br>";
+        qm = q[q.length-1];
+        q = asr(q);
+        q = a[a.length-1]+q.slice(1,q.length);
+        a = asr(a);
+        document.getElementById("p").innerHTML += 'ASR '+'A: '+a+' '+'Q: '+q+' '+'Q-1: '+qm+"<br>";
+    }
+
+    document.getElementById("p").innerHTML += "<br><br>Product = "+a+q+'<br>'+' = '+btds(a+q);
 }
-
-//tcmp('1010');
-
-
-//dtbs('10');
